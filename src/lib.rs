@@ -28,15 +28,12 @@ impl Term {
     pub fn new(coefficient: f32, variable: Variable, degree: f32) -> Term {
         Term { coefficient, variable, degree }
     }
-    // fn new_constant(coefficient: f32) -> Term {
-    //     Term { coefficient, variable: Variable::NoVariable, degree: 1.0}
-    // }
-    // fn new_linear(coefficient: f32, variable: Variable) -> Term {
-    //     Term {coefficient, variable, degree: 1.0}
-    // }
-    // fn new_singular(variable: Variable, degree: f32) -> Term {
-    //     Term{ coefficient: 1.0, variable, degree}
-    // }
+    fn constant(constant: f32) -> Term {
+        Term { coefficient: constant, variable: Variable::NoVariable, degree: 1.0}
+    }
+    fn linear(coefficient: f32, variable: Variable) -> Term {
+        Term {coefficient, variable, degree: 1.0}
+    }
 }
 
 impl Expression {
