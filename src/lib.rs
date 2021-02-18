@@ -1,6 +1,7 @@
 use std::fmt;
 use std::ops::Add;
 
+#[derive(Clone, PartialEq,)]
 pub enum Variable {
     None,
     Normal(char),
@@ -15,12 +16,14 @@ pub enum Variable {
     Cotangent(Expression),
 }
 
+#[derive(Clone, PartialEq,)]
 pub struct Term {
     coefficient: f32,
     variable: Variable,
     degree: f32,
 }
 
+#[derive(Clone, PartialEq,)]
 pub struct Expression {
     terms: Vec<Term>
 }
@@ -29,10 +32,10 @@ impl Term {
     pub fn new(coefficient: f32, variable: Variable, degree: f32) -> Term {
         Term { coefficient, variable, degree }
     }
-    fn constant(constant: f32) -> Term {
+    pub fn constant(constant: f32) -> Term {
         Term { coefficient: constant, variable: Variable::None, degree: 1.0}
     }
-    fn linear(coefficient: f32, variable: Variable) -> Term {
+    pub fn linear(coefficient: f32, variable: Variable) -> Term {
         Term {coefficient, variable, degree: 1.0}
     }
 }
@@ -57,8 +60,16 @@ impl Add for Expression {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
-        let mut terms: Vec<Term> = self.terms + rhs.terms;
-        terms.sort_by(|a, b| *a.degree.partial_cmp(*b.degree).unwrap());
+        let mut terms = [&self.terms[..], &rhs.terms[..]].concat();
+        terms.sort_by(|a, b| b.degree.partial_cmp(&a.degree).unwrap());
+        for i in 0..terms.len()-1 {
+            if terms[i].degree == terms[i+1].degree && terms[i].variable == terms[i+1].variable {
+                let term = &terms[i];
+                let term2 = &terms[i+1];
+                terms[i] = Term::new(term.coefficient + term2.coefficient, term.variable.clone(), term.degree);
+                terms.remove(i+1);
+            }
+        }
         Expression::new(terms)
     }
 }
@@ -67,11 +78,11 @@ impl fmt::Display for Expression {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         for (index, term) in self.terms.iter().enumerate() {
             if term.coefficient > 0.0 && index != 0 {
-                write!(f, "+");
+                write!(f, "+")?;
             }
-            write!(f, "{}", term);
+            write!(f, "{}", term)?;
         }
-        write!(f, "")
+        Result::Ok(())
     }
 }
 
