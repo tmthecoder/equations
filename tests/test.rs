@@ -20,7 +20,7 @@ mod tests {
         let t2 = Term::new(1.0, Variable::Normal('x'), 1.0);
         let t3 = Term::new(1.0, Variable::Normal('x'), 2.0);
         let t4 = Term::new(1.0, Variable::Normal('x'), 2.0);
-        let t5 = Term::new(1.0, Variable::Cosine(Term::new(1.0, Variable::Normal('x'), 1.0).into()), 2.0);
+        let t5 = Term::new(7.0, Variable::Cosine(Term::new(1.0, Variable::Normal('x'), 1.0).into()), 2.0);
         let t6 = Term::new(1.0, Variable::Cosine(Term::new(1.0, Variable::Normal('x'), 4.0).into()), 1.0);
         let jointEx = Expression::new(vec![t1, t2, t3, t4, t5, t6]);
         let ex1: Expression = Term::new(1.0, Variable::Normal('x'), 1.0).into();
