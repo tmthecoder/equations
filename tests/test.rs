@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use equations::{Term, Variable};
+    use equations::{Term, Variable, Expression};
 
     #[test]
     fn it_works() {
@@ -16,7 +16,7 @@ mod tests {
 
     #[test]
     fn trig_test() {
-        let trig_string = format!("{}", Term::new(1.0, Variable::Sine(Box::from(Term::new(1.0, Variable::Normal('x'), 1.0))), 2.0));
-        assert_eq!(trig_string, "sin(x)^2");
+        let trig_string = format!("{}", Term::new(1.0, Variable::Sine(Expression::from_single(Term::new(2.0, Variable::Normal('x'), 1.0))), 2.0));
+        assert_eq!(trig_string, "sin(2x)^2");
     }
 }

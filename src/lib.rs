@@ -3,21 +3,25 @@ use std::fmt;
 pub enum Variable {
     None,
     Normal(char),
-    Sine(Box<Term>),
-    Cosine(Box<Term>),
-    Tangent(Box<Term>),
-    Arcsine(Box<Term>),
-    Arccosine(Box<Term>),
-    Arctangent(Box<Term>),
-    Secant(Box<Term>),
-    Cosecant(Box<Term>),
-    Cotangent(Box<Term>),
+    Sine(Expression),
+    Cosine(Expression),
+    Tangent(Expression),
+    Arcsine(Expression),
+    Arccosine(Expression),
+    Arctangent(Expression),
+    Secant(Expression),
+    Cosecant(Expression),
+    Cotangent(Expression),
 }
 
 pub struct Term {
     coefficient: f32,
     variable: Variable,
     degree: f32,
+}
+
+pub struct Expression {
+    terms: Vec<Term>
 }
 
 impl Term {
@@ -33,6 +37,28 @@ impl Term {
     // fn new_singular(variable: Variable, degree: f32) -> Term {
     //     Term{ coefficient: 1.0, variable, degree}
     // }
+}
+
+impl Expression {
+    pub fn new(terms: Vec<Term>) -> Expression {
+        Expression { terms }
+    }
+
+    pub fn from_single(term: Term) -> Expression {
+        Expression { terms: vec![term] }
+    }
+}
+
+impl fmt::Display for Expression {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        for (index, term) in self.terms.iter().enumerate() {
+            if term.coefficient > 0.0 && index != 0 {
+                write!(f, "+");
+            }
+            write!(f, "{}", term);
+        }
+        write!(f, "")
+    }
 }
 
 impl fmt::Display for Term {
