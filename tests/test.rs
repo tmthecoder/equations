@@ -16,7 +16,7 @@ mod tests {
 
     #[test]
     fn trig_test() {
-        let trig_string = format!("{}", Term::new(1.0, Variable::Sine(Expression::from_single(Term::new(2.0, Variable::Normal('x'), 1.0))), 2.0));
+        let trig_string = format!("{}", Term::new(1.0, Variable::Sine(Term::new(2.0, Variable::Normal('x'), 1.0).into()), 2.0));
         assert_eq!(trig_string, "sin(2x)^2");
     }
 }

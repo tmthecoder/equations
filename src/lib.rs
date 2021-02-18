@@ -1,4 +1,5 @@
 use std::fmt;
+use std::ops::Add;
 
 pub enum Variable {
     None,
@@ -29,7 +30,7 @@ impl Term {
         Term { coefficient, variable, degree }
     }
     fn constant(constant: f32) -> Term {
-        Term { coefficient: constant, variable: Variable::NoVariable, degree: 1.0}
+        Term { coefficient: constant, variable: Variable::None, degree: 1.0}
     }
     fn linear(coefficient: f32, variable: Variable) -> Term {
         Term {coefficient, variable, degree: 1.0}
@@ -43,6 +44,22 @@ impl Expression {
 
     pub fn from_single(term: Term) -> Expression {
         Expression { terms: vec![term] }
+    }
+}
+
+impl From<Term> for Expression {
+    fn from(term: Term) -> Self {
+        Expression::from_single(term)
+    }
+}
+
+impl Add for Expression {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        let mut terms: Vec<Term> = self.terms + rhs.terms;
+        terms.sort_by(|a, b| *a.degree.partial_cmp(*b.degree).unwrap());
+        Expression::new(terms)
     }
 }
 
