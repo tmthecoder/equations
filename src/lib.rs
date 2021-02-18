@@ -56,25 +56,35 @@ impl From<Term> for Expression {
     }
 }
 
-impl Add for Expression {
-    type Output = Self;
+trait Simplifiable {
+    fn simplify(&mut self);
+}
 
-    fn add(self, rhs: Self) -> Self::Output {
-        let mut terms = [&self.terms[..], &rhs.terms[..]].concat();
-        terms.sort_by(|a, b| b.degree.partial_cmp(&a.degree).unwrap());
-        for i in 0..terms.len()-1 {
+impl Simplifiable for Vec<Term> {
+    fn simplify(&mut self) {
+        for i in 0..self.len()-1 {
             let mut j = i+1;
-            while j < terms.len() {
-                if terms[i].degree == terms[j].degree && terms[i].variable == terms[j].variable {
-                    let term = &terms[i];
-                    let term2 = &terms[j];
-                    terms[i] = Term::new(term.coefficient + term2.coefficient, term.variable.clone(), term.degree);
-                    terms.remove(j);
+            while j < self.len() {
+                if self[i].degree == self[j].degree && self[i].variable == self[j].variable {
+                    let term = &self[i];
+                    let term2 = &self[j];
+                    self[i] = Term::new(term.coefficient + term2.coefficient, term.variable.clone(), term.degree);
+                    self.remove(j);
                     continue;
                 }
                 j+=1;
             }
         }
+    }
+}
+
+impl Add for Expression {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        let mut terms = vec![&self.terms[..], &rhs.terms[..]].concat();
+        terms.sort_by(|a, b| b.degree.partial_cmp(&a.degree).unwrap());
+        terms.simplify();
         Expression::new(terms)
     }
 }
