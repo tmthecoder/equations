@@ -62,13 +62,17 @@ impl Add for Expression {
     fn add(self, rhs: Self) -> Self::Output {
         let mut terms = [&self.terms[..], &rhs.terms[..]].concat();
         terms.sort_by(|a, b| b.degree.partial_cmp(&a.degree).unwrap());
-        for i in 0..terms.len()-1 {
+        println!("{}", terms.len());
+        let mut i = 0;
+        while i < terms.len()-1 {
             if terms[i].degree == terms[i+1].degree && terms[i].variable == terms[i+1].variable {
                 let term = &terms[i];
                 let term2 = &terms[i+1];
                 terms[i] = Term::new(term.coefficient + term2.coefficient, term.variable.clone(), term.degree);
                 terms.remove(i+1);
+                continue;
             }
+            i+=1;
         }
         Expression::new(terms)
     }
