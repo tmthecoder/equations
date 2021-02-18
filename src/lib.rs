@@ -164,6 +164,6 @@ impl fmt::Display for Term {
 }
 
 struct Equation {
-    lhs: Vec<Term>,
-    rhs: Vec<Term>,
+    lhs: Expression,
+    rhs: Expression,
 }
