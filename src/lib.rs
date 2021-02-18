@@ -1,5 +1,5 @@
 use std::fmt;
-use std::ops::Add;
+use std::ops::{Add, Sub, AddAssign, SubAssign};
 
 #[derive(Clone, PartialEq, Debug)]
 pub enum Variable {
@@ -78,12 +78,47 @@ impl Simplifiable for Vec<Term> {
     }
 }
 
+impl AddAssign for Expression {
+    fn add_assign(&mut self, other: Self) {
+        let mut terms = vec![&self.terms[..], &other.terms[..]].concat();
+        terms.sort_by(|a, b| b.degree.partial_cmp(&a.degree).unwrap());
+        terms.simplify();
+        *self = Expression::new(terms);
+    }
+}
+
 impl Add for Expression {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
         let mut terms = vec![&self.terms[..], &rhs.terms[..]].concat();
         terms.sort_by(|a, b| b.degree.partial_cmp(&a.degree).unwrap());
+        terms.simplify();
+        Expression::new(terms)
+    }
+}
+
+impl SubAssign for Expression {
+    fn sub_assign(&mut self, rhs: Self) {
+        let mut negated = rhs.terms;
+        for mut term in negated.iter_mut() {
+            term.coefficient *= -1.0;
+        }
+        let mut terms = vec![&self.terms[..], &negated[..]].concat();
+        println!("{:?}", terms);
+        terms.simplify();
+        *self = Expression::new(terms);
+    }
+}
+
+impl Sub for Expression {
+    type Output = Self;
+    fn sub(self, rhs: Self) -> Self::Output {
+        let mut negated = rhs.terms;
+        for mut term in negated.iter_mut() {
+            term.coefficient *= -1.0;
+        }
+        let mut terms = vec![&self.terms[..], &negated[..]].concat();
         terms.simplify();
         Expression::new(terms)
     }
@@ -103,7 +138,6 @@ impl fmt::Display for Expression {
 
 impl fmt::Display for Term {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-
         let variable_str = match &self.variable {
             Variable::None => "".to_string(),
             Variable::Normal(x) => x.to_string(),
