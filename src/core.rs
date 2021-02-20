@@ -3,3 +3,4 @@ pub mod variable;
 pub mod expression;
 pub mod equation;
 pub mod simplifiable;
+pub mod degree;
